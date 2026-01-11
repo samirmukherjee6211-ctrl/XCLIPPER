@@ -1,0 +1,8 @@
+
+{
+  "name": "Nano Banana Thumbnail Editor",
+  "description": "Professional 16:9 YouTube thumbnail editor powered by Gemini 2.5 Flash Image. Paint masks and prompt Nano Banana to intelligently transform your images into viral-ready thumbnails.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
