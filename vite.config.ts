@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
           input: {
             main: path.resolve(__dirname, 'index.html'),
             signin: path.resolve(__dirname, 'signin.html'),
-            landing: path.resolve(__dirname, 'landing.html')
+            workspace: path.resolve(__dirname, 'workspace.html')
           }
         }
       }
