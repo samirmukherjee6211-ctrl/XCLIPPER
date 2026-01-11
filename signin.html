@@ -122,8 +122,8 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="landing.html" class="flex items-center gap-3">
-                <img src="brand/Untitled design (13).png" alt="Humixo Logo" class="h-10 w-auto">
+            <a href="/index.html" class="flex items-center gap-3">
+                <img src="/logo.png" alt="Humixo Logo" class="h-10 w-10">
                 <span class="text-2xl font-black tracking-tight text-white">HUMIXO</span>
             </a>
 
@@ -251,7 +251,7 @@
         document.getElementById('googleSignIn').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
-                window.location.href = 'index.html';
+                window.location.href = '/app.html';
             } catch (error) {
                 showError(error.message);
             }
@@ -279,7 +279,7 @@
                 await updateProfile(userCredential.user, {
                     displayName: fullName
                 });
-                window.location.href = 'index.html';
+                window.location.href = '/app.html';
             } catch (error) {
                 setLoading(false);
                 let errorMessage = 'An error occurred. Please try again.';
