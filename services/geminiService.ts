@@ -289,7 +289,7 @@ Keep the recreated prompt concise but detailed (2-3 sentences max). Make it acti
 
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
+        model: 'imagen-3.0-generate-001',
         contents: { parts },
         config: {
           imageConfig: {
