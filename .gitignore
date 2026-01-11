@@ -20,6 +20,7 @@ service-account-key.json
 !tsconfig.json
 !vite.config.ts
 !metadata.json
+!vercel.json
 
 # Editor directories and files
 .vscode/*
