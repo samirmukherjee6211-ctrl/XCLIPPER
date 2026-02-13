@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     return {
-      base: '/humixo/',
+      base: '/XCLIPPER-main/',
       server: {
         port: 5500,
         host: '0.0.0.0',
