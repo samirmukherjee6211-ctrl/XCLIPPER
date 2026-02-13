@@ -11,7 +11,7 @@ Create a new folder called `backend` and copy these files into it:
 
 ## Step 2: Deploy via Google Cloud Console
 
-1. Go to: https://console.cloud.google.com/run?project=humixo-thumbnail-maker
+1. Go to: https://console.cloud.google.com/run?project=xclipper-thumbnail-maker
 
 2. Click **CREATE SERVICE**
 
@@ -35,7 +35,7 @@ Create a new folder called `backend` and copy these files into it:
 7. Click **VARIABLES & SECRETS** tab:
    - Add environment variable:
      - Name: `GOOGLE_CLOUD_PROJECT_ID`
-     - Value: `humixo-thumbnail-maker`
+     - Value: `xclipper-thumbnail-maker`
 
 8. Click **CREATE**
 

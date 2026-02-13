@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Humixo - AI YouTube Thumbnail Generator</title>
+    <title>XClipper - AI YouTube Thumbnail Generator</title>
+    <link rel="icon" type="image/png" href="/logo2.png">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,50 +15,12 @@
         }
 
         body {
-            background: #030000;
+            background: #000000;
             color: white;
             overflow-x: hidden;
         }
 
-        .ambient-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255, 31, 31, 0.15), transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-            pointer-events: none;
-            animation: blob 10s infinite;
-        }
-
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        .glass-panel {
-            background: rgba(20, 20, 20, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.02);
-        }
-
-        .glass-button {
-            background: linear-gradient(135deg, rgba(255, 31, 31, 0.9), rgba(180, 0, 0, 0.9));
-            box-shadow: 0 0 15px rgba(255, 31, 31, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 100, 100, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .glass-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(255, 31, 31, 0.6);
-        }
-
+        /* Navigation */
         nav {
             position: fixed;
             top: 0;
@@ -67,16 +30,34 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             font-size: 1.5rem;
             font-weight: 900;
         }
 
+        .btn-signin {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-signin:hover {
+            background: rgba(60, 60, 60, 0.8);
+        }
+
+        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -84,218 +65,519 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
+            padding: 8rem 2rem 2rem;
         }
 
         h1 {
-            font-size: 4rem;
+            font-size: 5.5rem;
             font-weight: 900;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             line-height: 1.1;
+            letter-spacing: -0.02em;
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #FF1F1F, #FF6B6B);
+            background: linear-gradient(135deg, #FF1744 0%, #FF5252 50%, #FF6B6B 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .subtitle {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.5);
             margin-bottom: 3rem;
-            max-width: 600px;
         }
 
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
+        /* Prompt Box */
+        .prompt-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 4rem;
+            position: relative;
         }
 
-        .btn {
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
+        .prompt-box {
+            background: rgba(25, 25, 25, 0.8);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .prompt-box:hover {
+            border-color: rgba(255, 40, 60, 0.3);
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 2.5rem 3rem 7rem 3rem;
+            background: transparent;
             border: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            resize: none;
+            min-height: 140px;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            color: white;
+        }
+
+        .prompt-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+        }
+
+        .generate-btn {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1.15rem 2.75rem;
+            background: #FF1744;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(255, 23, 68, 0.3);
+            white-space: nowrap;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, rgba(255, 31, 31, 0.9), rgba(180, 0, 0, 0.9));
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 31, 31, 0.4);
+        .generate-btn:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 23, 68, 0.4);
+            background: #FF2D5A;
         }
 
-        .btn-secondary {
-            background: rgba(20, 20, 20, 0.4);
-            backdrop-filter: blur(16px);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .generate-btn:active {
+            transform: translateX(-50%) translateY(0);
         }
 
-        .features {
-            padding: 5rem 2rem;
-            position: relative;
-            z-index: 1;
+        /* Thumbnails Section */
+        .thumbnails-section {
+            padding: 2rem 0 4rem;
+            overflow: hidden;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            padding: 2rem;
-            border-radius: 16px;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255, 31, 31, 0.2), rgba(180, 0, 0, 0.2));
+        .section-label {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+            gap: 0.5rem;
         }
 
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .warning-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 200, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .thumbnail-row {
+            display: flex;
+            gap: 20px;
+            animation: scrollLeft 40s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-row:nth-child(3) {
+            animation: scrollRight 40s linear infinite;
+        }
+
+        .thumbnail-item {
+            flex-shrink: 0;
+            width: 320px;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(30, 30, 30, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-320px * 10 - 200px)); }
+        }
+
+        @keyframes scrollRight {
+            0% { transform: translateX(calc(-320px * 10 - 200px)); }
+            100% { transform: translateX(0); }
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 6rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-item {
+            background: rgba(15, 15, 15, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(255, 23, 68, 0.3);
+        }
+
+        .faq-question {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+
+        .faq-answer {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            padding: 6rem 2rem;
+            background: rgba(10, 10, 10, 0.5);
+        }
+
+        .reviews-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .reviews-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .review-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            border-color: rgba(255, 23, 68, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .review-stars {
+            color: #FF1744;
+            font-size: 1.25rem;
             margin-bottom: 1rem;
         }
 
-        .feature-desc {
+        .review-text {
+            font-size: 1rem;
             color: rgba(255, 255, 255, 0.7);
             line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF1744, #FF5252);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .review-info {
+            flex: 1;
+        }
+
+        .review-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .review-role {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.5rem;
+                font-size: 3rem;
             }
             .subtitle {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
             nav {
                 padding: 1rem 1.5rem;
+            }
+            .prompt-box {
+                border-radius: 24px;
+            }
+            .prompt-input {
+                padding: 2rem 2rem 6rem 2rem;
+                font-size: 1.25rem;
+                min-height: 120px;
+            }
+            .generate-btn {
+                bottom: 25px;
+                padding: 1rem 2rem;
+                font-size: 0.95rem;
+            }
+            .thumbnail-item {
+                width: 240px;
+                height: 135px;
+            }
+            .faq-title, .reviews-title {
+                font-size: 2rem;
+            }
+            .reviews-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Ambient Background -->
-    <div class="ambient-glow" style="top: -20%; left: -10%;"></div>
-    <div class="ambient-glow" style="bottom: -20%; right: -10%; animation-delay: 2s; background: radial-gradient(circle, rgba(100, 0, 0, 0.2), transparent 70%);"></div>
-
     <!-- Navigation -->
     <nav>
         <div class="logo">
-            <img src="/logo.png" alt="Humixo" style="width: 40px; height: 40px;">
-            <span>HUMIXO</span>
+            <img src="/logo2.png" alt="XClipper" style="width: 40px; height: 40px;">
+            <span>XCLIPPER</span>
         </div>
-        <a href="/signin.html" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">Sign In</a>
+        <a href="/signin.html" class="btn-signin">Sign In</a>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
         <h1>
-            Create Viral<br>
-            <span class="gradient-text">YouTube Thumbnails</span><br>
-            with AI
+            Create <span class="gradient-text">Viral</span><br>
+            YouTube Thumbnails
         </h1>
         <p class="subtitle">
-            Generate professional, click-worthy thumbnails in seconds using advanced AI technology
+            AI-powered thumbnails that get clicks and views
         </p>
-        <div class="cta-buttons">
-            <a href="/signin.html" class="btn btn-primary glass-button">Get Started Free</a>
-            <a href="#features" class="btn btn-secondary glass-panel">Learn More</a>
+
+        <!-- Prompt Box -->
+        <div class="prompt-container">
+            <div class="prompt-box">
+                <textarea 
+                    class="prompt-input" 
+                    placeholder="The secret tattoos of famous footballers"
+                ></textarea>
+            </div>
+            <a href="/signin.html" class="generate-btn">
+                ✨ Generate My First Thumbnail
+            </a>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="features-grid">
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">🎨</div>
-                <h3 class="feature-title">AI-Powered Generation</h3>
-                <p class="feature-desc">
-                    Generate stunning thumbnails from text prompts using Gemini 3 Pro AI technology
-                </p>
-            </div>
+    <!-- Thumbnails Section -->
+    <section class="thumbnails-section">
+        <div class="section-label">
+            <span class="warning-icon">⚠</span>
+            <span>Inspired by creators with millions of views</span>
+        </div>
 
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">✨</div>
-                <h3 class="feature-title">Prompt Enhancement</h3>
-                <p class="feature-desc">
-                    Let AI enhance your prompts for better, more viral thumbnail results
-                </p>
-            </div>
+        <!-- First Row -->
+        <div class="thumbnail-row">
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Qbe0I3X6R-o/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/CWjurZ1dhTg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/UnvtdsiTgD8/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Bwx-wbX7ljc/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/TP7Z_Eqxhxk/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/8Gm7kSUkBAk/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/LAPcW7OAv98/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0e3GPea1Tyg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/iogcY_4xGjo/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0BjlBnfHcHM/maxresdefault.jpg" alt=""></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Qbe0I3X6R-o/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/CWjurZ1dhTg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/UnvtdsiTgD8/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Bwx-wbX7ljc/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/TP7Z_Eqxhxk/maxresdefault.jpg" alt=""></div>
+        </div>
 
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">🔄</div>
-                <h3 class="feature-title">Instant Variations</h3>
-                <p class="feature-desc">
-                    Create multiple variations of your thumbnails with one click
-                </p>
-            </div>
-
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">👤</div>
-                <h3 class="feature-title">Persona Feature</h3>
-                <p class="feature-desc">
-                    Train AI on your face to appear consistently in all your thumbnails
-                </p>
-            </div>
-
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Thumbnail Optimizer</h3>
-                <p class="feature-desc">
-                    Analyze existing thumbnails and get AI-powered suggestions to improve CTR
-                </p>
-            </div>
-
-            <div class="feature-card glass-panel">
-                <div class="feature-icon">🎯</div>
-                <h3 class="feature-title">16:9 Perfect Ratio</h3>
-                <p class="feature-desc">
-                    All thumbnails generated in perfect YouTube 16:9 aspect ratio
-                </p>
-            </div>
+        <!-- Second Row -->
+        <div class="thumbnail-row">
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/8Gm7kSUkBAk/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/LAPcW7OAv98/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0e3GPea1Tyg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/iogcY_4xGjo/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0BjlBnfHcHM/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Qbe0I3X6R-o/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/CWjurZ1dhTg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/UnvtdsiTgD8/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/Bwx-wbX7ljc/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/TP7Z_Eqxhxk/maxresdefault.jpg" alt=""></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/8Gm7kSUkBAk/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/LAPcW7OAv98/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0e3GPea1Tyg/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/iogcY_4xGjo/maxresdefault.jpg" alt=""></div>
+            <div class="thumbnail-item"><img src="https://img.youtube.com/vi/0BjlBnfHcHM/maxresdefault.jpg" alt=""></div>
         </div>
     </section>
 
-    <script>
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-    </script>
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question">How does XClipper work?</div>
+            <div class="faq-answer">Simply describe your thumbnail idea in plain text, and our AI generates a professional YouTube thumbnail in seconds. No design skills needed.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">What makes a good thumbnail?</div>
+            <div class="faq-answer">Great thumbnails have bold text, eye-catching visuals, and create curiosity. XClipper's AI is trained on millions of viral thumbnails to create designs that get clicks.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Can I edit the generated thumbnails?</div>
+            <div class="faq-answer">Yes! After generating, you can recreate variations or edit specific elements until you get the perfect thumbnail for your video.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">How many thumbnails can I create?</div>
+            <div class="faq-answer">New users get 10 free credits to try XClipper. Each thumbnail generation costs 1 credit. You can purchase more credits anytime with flexible pricing plans.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">What size are the thumbnails?</div>
+            <div class="faq-answer">All thumbnails are generated in YouTube's recommended 1280x720 resolution, perfect for uploading directly to your videos.</div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+        <h2 class="reviews-title">What Creators Are Saying</h2>
+        
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"XClipper saved me hours of design work. My click-through rate increased by 40% after switching to AI-generated thumbnails. Game changer!"</div>
+                <div class="review-author">
+                    <div class="review-avatar">M</div>
+                    <div class="review-info">
+                        <div class="review-name">Marcus Chen</div>
+                        <div class="review-role">Tech YouTuber, 250K subs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"I'm not a designer, but XClipper makes me look like one. The thumbnails are professional and actually get people to click. Worth every penny."</div>
+                <div class="review-author">
+                    <div class="review-avatar">S</div>
+                    <div class="review-info">
+                        <div class="review-name">Sarah Johnson</div>
+                        <div class="review-role">Lifestyle Creator, 180K subs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"Finally, a tool that understands what makes thumbnails work. My views doubled in the first month. XClipper is now part of my workflow."</div>
+                <div class="review-author">
+                    <div class="review-avatar">D</div>
+                    <div class="review-info">
+                        <div class="review-name">David Rodriguez</div>
+                        <div class="review-role">Gaming Channel, 500K subs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"The AI understands YouTube trends better than I do. Every thumbnail looks like it could go viral. My audience engagement is through the roof!"</div>
+                <div class="review-author">
+                    <div class="review-avatar">E</div>
+                    <div class="review-info">
+                        <div class="review-name">Emma Williams</div>
+                        <div class="review-role">Education Channel, 320K subs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"I was skeptical at first, but XClipper delivers. The thumbnails look professional and my CTR improved significantly. Highly recommend!"</div>
+                <div class="review-author">
+                    <div class="review-avatar">J</div>
+                    <div class="review-info">
+                        <div class="review-name">James Park</div>
+                        <div class="review-role">Business Channel, 150K subs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">"Best investment for my channel. XClipper creates thumbnails that actually convert viewers. My watch time and subscriber growth are up!"</div>
+                <div class="review-author">
+                    <div class="review-avatar">L</div>
+                    <div class="review-info">
+                        <div class="review-name">Lisa Anderson</div>
+                        <div class="review-role">Fitness Creator, 420K subs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

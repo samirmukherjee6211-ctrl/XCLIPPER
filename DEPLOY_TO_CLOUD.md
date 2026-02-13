@@ -24,7 +24,7 @@ This will:
 
 ```bash
 # Set your project
-gcloud config set project humixo-thumbnail-maker
+gcloud config set project xclipper-thumbnail-maker
 
 # Deploy to Cloud Run
 gcloud run deploy imagen-backend \
@@ -32,8 +32,8 @@ gcloud run deploy imagen-backend \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars GOOGLE_CLOUD_PROJECT_ID=humixo-thumbnail-maker,GOOGLE_CLOUD_LOCATION=us-central1 \
-  --service-account imagen-service@humixo-thumbnail-maker.iam.gserviceaccount.com \
+  --set-env-vars GOOGLE_CLOUD_PROJECT_ID=xclipper-thumbnail-maker,GOOGLE_CLOUD_LOCATION=us-central1 \
+  --service-account imagen-service@xclipper-thumbnail-maker.iam.gserviceaccount.com \
   --memory 512Mi \
   --timeout 60s
 ```
@@ -75,8 +75,8 @@ async generateImageFromPrompt(prompt: string): Promise<string> {
 ### Error: "Permission denied"
 Make sure the service account has the correct permissions:
 ```bash
-gcloud projects add-iam-policy-binding humixo-thumbnail-maker \
-  --member="serviceAccount:imagen-service@humixo-thumbnail-maker.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding xclipper-thumbnail-maker \
+  --member="serviceAccount:imagen-service@xclipper-thumbnail-maker.iam.gserviceaccount.com" \
   --role="roles/aiplatform.user"
 ```
 

@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     return {
+      base: '/humixo/',
       server: {
         port: 5500,
         host: '0.0.0.0',

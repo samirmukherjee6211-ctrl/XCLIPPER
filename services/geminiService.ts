@@ -8,14 +8,16 @@ const GEMINI_IMAGE_GEN = 'gemini-2.0-flash-exp';
 
 export class GeminiService {
   /**
-   * Enhances a thumbnail prompt using ChatGPT to make it more effective for viral thumbnails.
+   * Enhances a thumbnail prompt using Google Gemini to make it more effective for viral thumbnails.
    */
   async enhancePrompt(userPrompt: string): Promise<string> {
-    const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
     
-    if (!OPENAI_API_KEY) {
-      throw new Error("OpenAI API key is not configured.");
+    if (!GEMINI_API_KEY) {
+      throw new Error("API key is not configured.");
     }
+
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     const systemPrompt = `You are an expert YouTube thumbnail designer and viral content strategist. You have analyzed thousands of successful thumbnails from top creators like MrBeast, MKBHD, and other viral YouTubers. You understand:
 
@@ -36,30 +38,22 @@ Your task is to take a user's thumbnail idea and enhance it into a detailed, pro
 Keep the enhanced prompt concise but detailed (2-3 sentences max). Make it actionable for image generation.`;
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: {
+          parts: [{
+            text: systemPrompt + `\n\nEnhance this YouTube thumbnail idea into a detailed, professional prompt: "${userPrompt}"`
+          }]
         },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Enhance this YouTube thumbnail idea into a detailed, professional prompt: "${userPrompt}"` }
-          ],
-          temperature: 0.8,
-          max_tokens: 200
-        })
+        config: {
+          generationConfig: {
+            temperature: 0.8,
+            maxOutputTokens: 200
+          }
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || 'Failed to enhance prompt');
-      }
-
-      const data = await response.json();
-      const enhancedPrompt = data.choices[0]?.message?.content?.trim();
+      const enhancedPrompt = response.text?.trim();
 
       if (!enhancedPrompt) {
         throw new Error('No enhanced prompt returned');
@@ -73,7 +67,7 @@ Keep the enhanced prompt concise but detailed (2-3 sentences max). Make it actio
   }
 
   /**
-   * Analyzes a thumbnail using ChatGPT Vision to provide virality score and feedback.
+   * Analyzes a thumbnail using Google Gemini Vision to provide virality score and feedback.
    */
   async analyzeThumbnail(imageBase64: string): Promise<{
     viralityScore: number;
@@ -81,11 +75,13 @@ Keep the enhanced prompt concise but detailed (2-3 sentences max). Make it actio
     cons: string[];
     suggestions: string[];
   }> {
-    const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
     
-    if (!OPENAI_API_KEY) {
-      throw new Error("OpenAI API key is not configured.");
+    if (!GEMINI_API_KEY) {
+      throw new Error("API key is not configured.");
     }
+
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     const systemPrompt = `You are an expert YouTube thumbnail analyst and viral content strategist. You have analyzed thousands of successful thumbnails from top creators like MrBeast, MKBHD, and other viral YouTubers.
 
@@ -105,9 +101,7 @@ Consider these factors:
 - Thumbnail clarity at small sizes
 - Competitive advantage in the niche
 
-CRITICAL: Respond with ONLY a valid JSON object. Do not include any markdown formatting, code blocks, or explanatory text. Just the raw JSON.
-
-Format:
+Respond with ONLY a valid JSON object in this exact format:
 {
   "viralityScore": 85,
   "pros": ["Strong contrast makes text pop", "Facial expression creates curiosity"],
@@ -116,45 +110,35 @@ Format:
 }`;
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { 
-              role: 'user', 
-              content: [
-                {
-                  type: 'text',
-                  text: 'Analyze this YouTube thumbnail and provide a detailed assessment.'
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: imageBase64
-                  }
-                }
-              ]
+      // Extract base64 data from data URL
+      const base64Data = imageBase64.includes('base64,') 
+        ? imageBase64.split('base64,')[1] 
+        : imageBase64;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: {
+          parts: [
+            {
+              text: systemPrompt + '\n\nAnalyze this YouTube thumbnail and provide a detailed assessment in JSON format.'
+            },
+            {
+              inlineData: {
+                mimeType: 'image/jpeg',
+                data: base64Data
+              }
             }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.7,
-          max_tokens: 800
-        })
+          ]
+        },
+        config: {
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1000
+          }
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || 'Failed to analyze thumbnail');
-      }
-
-      const data = await response.json();
-      const analysisText = data.choices[0]?.message?.content?.trim();
+      const analysisText = response.text?.trim();
 
       if (!analysisText) {
         throw new Error('No analysis returned');
@@ -192,11 +176,13 @@ Format:
    * Creates a variation of an existing prompt by tweaking it slightly for recreation.
    */
   async recreatePrompt(originalPrompt: string): Promise<string> {
-    const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
     
-    if (!OPENAI_API_KEY) {
-      throw new Error("OpenAI API key is not configured.");
+    if (!GEMINI_API_KEY) {
+      throw new Error("API key is not configured.");
     }
+
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     const systemPrompt = `You are a creative YouTube thumbnail designer. Your task is to take an existing thumbnail prompt and create a fresh variation of it. The variation should:
 
@@ -209,30 +195,22 @@ Format:
 Keep the recreated prompt concise but detailed (2-3 sentences max). Make it actionable for image generation.`;
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: {
+          parts: [{
+            text: systemPrompt + `\n\nCreate a fresh variation of this YouTube thumbnail prompt with different details but same concept: "${originalPrompt}"`
+          }]
         },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Create a fresh variation of this YouTube thumbnail prompt with different details but same concept: "${originalPrompt}"` }
-          ],
-          temperature: 0.9,
-          max_tokens: 200
-        })
+        config: {
+          generationConfig: {
+            temperature: 0.9,
+            maxOutputTokens: 200
+          }
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || 'Failed to recreate prompt');
-      }
-
-      const data = await response.json();
-      const recreatedPrompt = data.choices[0]?.message?.content?.trim();
+      const recreatedPrompt = response.text?.trim();
 
       if (!recreatedPrompt) {
         throw new Error('No recreated prompt returned');
@@ -246,76 +224,34 @@ Keep the recreated prompt concise but detailed (2-3 sentences max). Make it acti
   }
 
   /**
-   * Generates an image from a text prompt using Gemini 3 Pro (Thumbnail Gen Pro backend).
+   * Generates an image from a text prompt using the backend API (Nano Banana).
    * Optimized for YouTube thumbnails in 16:9 ratio.
    */
   async generateImageFromPrompt(prompt: string, persona?: any): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
-
-    const parts: any[] = [];
-
-    // If a persona is provided, we send all images as reference for face replication
-    if (persona && persona.images && persona.images.length > 0) {
-      // Add persona images as visual context
-      persona.images.forEach((imgBase64: string) => {
-        const base64Data = imgBase64.split(',')[1] || imgBase64;
-        parts.push({
-          inlineData: {
-            mimeType: 'image/png',
-            data: base64Data,
-          },
-        });
-      });
-
-      // Instructions to link the text prompt to the provided images
-      parts.push({
-        text: `ACT AS A PROFESSIONAL YOUTUBE THUMBNAIL DESIGNER.
-        
-        REFERENCE IMAGES: Attached are reference photos of the person named "${persona.name}".
-        
-        TASK: Generate a viral, high-click-through-rate YouTube thumbnail. 
-        CRITICAL REQUIREMENT: Replicate the EXACT face of the person from the reference images in the scene described below.
-        
-        SCENE DESCRIPTION: ${prompt}
-        
-        STYLE: Cinematic lighting, bold composition, vibrant colors, 4K quality.`
-      });
-    } else {
-      // Standard high-quality thumbnail prompt
-      parts.push({
-        text: `Generate a professional, viral YouTube thumbnail for the following topic: ${prompt}. Use high contrast, cinematic lighting, and eye-catching composition.`
-      });
-    }
-
     try {
-      const response = await ai.models.generateContent({
-        model: 'imagen-3.0-generate-001',
-        contents: { parts },
-        config: {
-          imageConfig: {
-            aspectRatio: "16:9",
-            imageSize: "1K" // Using 1K for better reliability/speed
-          }
+      // Call the backend API instead of Google directly
+      const response = await fetch('http://localhost:3001/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ prompt })
       });
 
-      if (!response.candidates || response.candidates.length === 0) {
-        throw new Error("No candidates returned from Gemini");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.error || 'Failed to generate image');
       }
 
-      // Iterate to find the image part in the response
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:image/png;base64,${part.inlineData.data}`;
-        }
+      const data = await response.json();
+      
+      if (!data.success || !data.image) {
+        throw new Error('No image data returned from server');
       }
 
-      throw new Error("No image data found in response");
+      return data.image;
     } catch (error: any) {
-      console.error("Gemini API Error:", error);
-      if (error.message?.includes("404") || error.message?.includes("not found")) {
-        throw new Error("API key error. Please check your configuration.");
-      }
+      console.error("Image Generation Error:", error);
       throw new Error(error.message || 'Failed to generate thumbnail');
     }
   }

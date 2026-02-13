@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-PROJECT_ID="humixo-thumbnail-maker"
+PROJECT_ID="xclipper-thumbnail-maker"
 SERVICE_NAME="imagen-backend"
 REGION="us-central1"
 SERVICE_ACCOUNT="imagen-backend@${PROJECT_ID}.iam.gserviceaccount.com"

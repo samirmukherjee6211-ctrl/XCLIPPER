@@ -1,22 +1,19 @@
-
 import React, { useState, useEffect } from 'react';
 
 const LoadingOverlay: React.FC = () => {
   const [messageIndex, setMessageIndex] = useState(0);
   const messages = [
-    "Initializing Nano Banana Pro Engine...",
-    "Reconstructing Identity Meshes...",
-    "Synthesizing Neural Skin Textures...",
-    "Calibrating Ambient Light Physics...",
-    "Gemini 3 Pro is refining pixel data...",
-    "Matching Biometric Markers...",
-    "Finalizing Professional Compositing..."
+    "Creating your thumbnail...",
+    "Adding details...",
+    "Enhancing colors...",
+    "Almost ready...",
+    "Finalizing your image..."
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setMessageIndex(prev => (prev + 1) % messages.length);
-    }, 3000);
+    }, 2500);
     return () => clearInterval(interval);
   }, [messages.length]);
 
@@ -26,7 +23,7 @@ const LoadingOverlay: React.FC = () => {
         <div className="w-32 h-32 border-8 border-[#FF1F1F]/10 rounded-full"></div>
         <div className="absolute inset-0 w-32 h-32 border-t-8 border-[#FF1F1F] rounded-full animate-[spin_1.5s_linear_infinite]"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-            <i className="fas fa-atom text-4xl text-[#FF1F1F] animate-pulse"></i>
+            <i className="fas fa-image text-4xl text-[#FF1F1F] animate-pulse"></i>
         </div>
         
         {/* Decorative scanning line */}
@@ -39,10 +36,10 @@ const LoadingOverlay: React.FC = () => {
         </h2>
         <div className="flex items-center justify-center gap-3 text-slate-500 font-black uppercase tracking-widest text-[10px]">
             <span className="inline-block w-2 h-2 rounded-full bg-[#FF1F1F] animate-pulse"></span>
-            NEURAL COMPUTE ACTIVE
+            GENERATING
         </div>
         <p className="mt-8 text-slate-600 text-[11px] font-bold max-w-sm mx-auto uppercase tracking-tighter leading-relaxed">
-            Gemini 3 Pro is executing a surgical identity transplant. This process requires high compute density for realistic results.
+            XClipper is generating your professional YouTube thumbnail. This may take a few moments.
         </p>
       </div>
       

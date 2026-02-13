@@ -5,6 +5,8 @@ import ControlPanel from './components/ControlPanel';
 import LoadingOverlay from './components/LoadingOverlay';
 import { geminiService } from './services/geminiService';
 import { creditsService } from './services/creditsService';
+import { auth } from './firebase.config';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'optimize' | 'upgrade'>('home');
@@ -42,6 +44,7 @@ const App: React.FC = () => {
   const [credits, setCredits] = useState(10); // Will be loaded from Firebase
   const [userId, setUserId] = useState<string>('demo-user'); // Replace with actual auth user ID
   const [isLoadingCredits, setIsLoadingCredits] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,11 +54,48 @@ const App: React.FC = () => {
   // Get selected persona
   const selectedPersona = personas.find(p => p.id === selectedPersonaId);
 
-  // Load user credits from Firebase (DISABLED - using local credits)
+  // Listen to Firebase Auth state changes
   useEffect(() => {
-    // Set default credits without Firebase
-    setCredits(1000);
-    setIsLoadingCredits(false);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', user ? `User logged in: ${user.email}` : 'No user');
+      if (user) {
+        setCurrentUser(user);
+        setUserId(user.uid);
+        console.log('User ID set to:', user.uid);
+      } else {
+        console.log('No user authenticated, redirecting to signin');
+        // Redirect to signin if not authenticated
+        window.location.href = '/signin.html';
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Load user credits from Firebase
+  useEffect(() => {
+    console.log('Credits effect triggered. UserId:', userId);
+    if (!userId || userId === 'demo-user') {
+      console.log('Skipping credit load - invalid userId');
+      return;
+    }
+
+    const loadCredits = async () => {
+      try {
+        console.log('Starting to load credits for user:', userId);
+        setIsLoadingCredits(true);
+        const userCredits = await creditsService.getUserCredits(userId);
+        console.log('Credits loaded successfully:', userCredits);
+        setCredits(userCredits);
+      } catch (error) {
+        console.error('Error loading credits:', error);
+        setError('Failed to load credits');
+      } finally {
+        setIsLoadingCredits(false);
+      }
+    };
+
+    loadCredits();
   }, [userId]);
 
   // Initialize Speech Recognition
@@ -524,7 +564,7 @@ const App: React.FC = () => {
     if (!images.original) return;
     const link = document.createElement('a');
     link.href = images.original;
-    link.download = `humixo-thumbnail-${Date.now()}.png`;
+    link.download = `xclipper-thumbnail-${Date.now()}.png`;
     link.click();
   };
 
@@ -630,8 +670,8 @@ const App: React.FC = () => {
         {/* Logo */}
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="w-8 h-8" />
-            <span className="text-xl font-black tracking-tight">HUMIXO</span>
+            <img src="/logo2.png" alt="Logo" className="w-8 h-8" />
+            <span className="text-xl font-black tracking-tight">XCLIPPER</span>
           </div>
         </div>
 
@@ -738,10 +778,10 @@ const App: React.FC = () => {
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF1F1F] to-orange-600 flex items-center justify-center font-bold text-sm">
-              S
+              {currentUser?.displayName?.[0]?.toUpperCase() || currentUser?.email?.[0]?.toUpperCase() || 'U'}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold">Sampriti Banerjee</p>
+              <p className="text-sm font-semibold">{currentUser?.displayName || currentUser?.email?.split('@')[0] || 'User'}</p>
               <p className="text-xs text-gray-500">Free Plan</p>
             </div>
           </div>
@@ -768,7 +808,7 @@ const App: React.FC = () => {
           <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
             <div className="ml-12 lg:ml-0">
               <h2 className="text-xl lg:text-2xl font-bold">Dashboard</h2>
-              <p className="text-xs lg:text-sm text-gray-400 hidden sm:block">banerjeesampriti7@gmail.com</p>
+              <p className="text-xs lg:text-sm text-gray-400 hidden sm:block">{currentUser?.email || 'Loading...'}</p>
             </div>
 
             <div className="flex items-center gap-2 lg:gap-4">
@@ -955,7 +995,7 @@ const App: React.FC = () => {
                                   onClick={() => {
                                     const link = document.createElement('a');
                                     link.href = item.image;
-                                    link.download = `humixo-thumbnail-${item.timestamp}.png`;
+                                    link.download = `xclipper-thumbnail-${item.timestamp}.png`;
                                     link.click();
                                   }}
                                   className="flex-1 px-4 py-2.5 rounded-xl glass-button text-white font-semibold flex items-center justify-center gap-2 text-sm hover:brightness-110 transition-all"
