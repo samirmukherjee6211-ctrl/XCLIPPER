@@ -220,6 +220,27 @@ export class CreditsService {
   }
 
   /**
+   * Get generation cost
+   */
+  getGenerationCost(): number {
+    return GENERATION_COST;
+  }
+
+  /**
+   * Get edit cost
+   */
+  getEditCost(): number {
+    return EDIT_COST;
+  }
+
+  /**
+   * Get recreate cost
+   */
+  getRecreateCost(): number {
+    return RECREATE_COST;
+  }
+
+  /**
    * Get available plans
    */
   getPlans() {

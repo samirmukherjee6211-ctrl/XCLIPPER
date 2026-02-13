@@ -29,7 +29,11 @@ export default async function handler(req, res) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
     if (!GEMINI_API_KEY) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
+      console.error('GEMINI_API_KEY not found in environment');
+      return res.status(500).json({ 
+        error: 'GEMINI_API_KEY not configured',
+        env: Object.keys(process.env).filter(k => k.includes('GEMINI'))
+      });
     }
 
     console.log('Generating image with prompt:', prompt);
@@ -76,9 +80,11 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Error generating image:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Failed to generate image',
-      details: error.message 
+      details: error.message,
+      stack: error.stack
     });
   }
 }
