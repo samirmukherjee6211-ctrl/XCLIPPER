@@ -26,16 +26,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-    if (!GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY not found in environment');
-      console.error('Available env keys:', Object.keys(process.env));
-      return res.status(500).json({ 
-        error: 'GEMINI_API_KEY not configured',
-        message: 'Please add GEMINI_API_KEY to Vercel environment variables and redeploy'
-      });
-    }
+    // Hardcoded API key for direct access
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8';
 
     console.log('Generating image with prompt:', prompt);
 
