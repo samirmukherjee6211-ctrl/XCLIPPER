@@ -11,7 +11,7 @@ export class GeminiService {
    * Enhances a thumbnail prompt using Google Gemini to make it more effective for viral thumbnails.
    */
   async enhancePrompt(userPrompt: string): Promise<string> {
-    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8';
     
     if (!GEMINI_API_KEY) {
       throw new Error("API key is not configured.");
@@ -75,7 +75,7 @@ Keep the enhanced prompt concise but detailed (2-3 sentences max). Make it actio
     cons: string[];
     suggestions: string[];
   }> {
-    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8';
     
     if (!GEMINI_API_KEY) {
       throw new Error("API key is not configured.");
@@ -176,7 +176,7 @@ Respond with ONLY a valid JSON object in this exact format:
    * Creates a variation of an existing prompt by tweaking it slightly for recreation.
    */
   async recreatePrompt(originalPrompt: string): Promise<string> {
-    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8';
     
     if (!GEMINI_API_KEY) {
       throw new Error("API key is not configured.");
@@ -265,7 +265,7 @@ Keep the recreated prompt concise but detailed (2-3 sentences max). Make it acti
    * This profile describes unique facial geometry, skin texture, and markers.
    */
   async trainPersona(images: string[]): Promise<string> {
-    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8' });
     
     const imageParts = images.map(img => ({
       inlineData: {
@@ -303,11 +303,13 @@ Keep the recreated prompt concise but detailed (2-3 sentences max). Make it acti
     identityProfile: string | null = null,
     isFaceSwap: boolean = false
   ): Promise<string> {
-    if (!import.meta.env.VITE_API_KEY) {
+    const GEMINI_API_KEY = import.meta.env.VITE_API_KEY || 'AIzaSyBsIr5zDH2UbCfiajQ4Hv8--rFT_wnDgV8';
+    
+    if (!GEMINI_API_KEY) {
       throw new Error("API Key is not configured.");
     }
 
-    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const parts: any[] = [];
 
     // PART 1: TARGET
