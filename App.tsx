@@ -7,6 +7,7 @@ import { geminiService } from './services/geminiService';
 import { creditsService } from './services/creditsService';
 import { auth } from './firebase.config';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import logoImage from './logo2.png';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'optimize' | 'upgrade'>('home');
@@ -670,7 +671,7 @@ const App: React.FC = () => {
         {/* Logo */}
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <img src="/logo2.png" alt="Logo" className="w-8 h-8" />
+            <img src={logoImage} alt="Logo" className="w-8 h-8" />
             <span className="text-xl font-black tracking-tight">XCLIPPER</span>
           </div>
         </div>
