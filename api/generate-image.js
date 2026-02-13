@@ -30,9 +30,10 @@ export default async function handler(req, res) {
 
     if (!GEMINI_API_KEY) {
       console.error('GEMINI_API_KEY not found in environment');
+      console.error('Available env keys:', Object.keys(process.env));
       return res.status(500).json({ 
         error: 'GEMINI_API_KEY not configured',
-        env: Object.keys(process.env).filter(k => k.includes('GEMINI'))
+        message: 'Please add GEMINI_API_KEY to Vercel environment variables and redeploy'
       });
     }
 
