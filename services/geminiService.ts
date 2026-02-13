@@ -229,8 +229,12 @@ Keep the recreated prompt concise but detailed (2-3 sentences max). Make it acti
    */
   async generateImageFromPrompt(prompt: string, persona?: any): Promise<string> {
     try {
-      // Call the backend API instead of Google directly
-      const response = await fetch('http://localhost:3001/api/generate-image', {
+      // Use relative path for API - works on both localhost and Vercel
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api/generate-image'
+        : '/api/generate-image';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
